@@ -15,7 +15,7 @@ typedef struct {
   cell_t **cells;
 } world_t;
 
-int countNeighbours(int x, int y, world_t *world);
+int countNeighbours(int y, int x, world_t *world);
 void fillWorld(world_t *world);
 void printWorld(world_t *world);
 void nextStep(world_t *world);
@@ -90,7 +90,10 @@ void printWorld(world_t *world) {
   for (i=0; i < height; i++) {
     for (j=0; j<width; j++) {
       if(world->cells[i][j].alive) {
-        printf("●");
+        //printf("●");
+        //printf("█");
+        //printf("▆");
+        printf("◈");
       } else {
         printf(" ");
       }
@@ -111,72 +114,74 @@ void fillWorld(world_t *world) {
   }
 }
 
-int countNeighbours(int x, int y, world_t *world) {
+int countNeighbours(int y, int x, world_t *world) {
   int counter = 0;
 
   // Rand unten links
   if(x<1 && y<1) {
-    if (world->cells[x][y+1].alive)    counter++;
-    if (world->cells[x+1][y].alive)    counter++;
-    if (world->cells[x+1][y+1].alive)  counter++;
+    if (world->cells[y][x+1].alive)    counter++;
+    if (world->cells[y+1][x].alive)    counter++;
+    if (world->cells[y+1][x+1].alive)  counter++;
 
     return counter;
   }
 
   // Rand links
-  if(x<1 && y>=1) {
-    if (world->cells[x][y+1].alive)    counter++;
-    if (world->cells[x][y-1].alive)    counter++;
-    if (world->cells[x+1][y].alive)    counter++;
-    if (world->cells[x+1][y+1].alive)  counter++;
-    if (world->cells[x+1][y-1].alive)  counter++;
+  if(y<1 && x>=1) {
+    if (world->cells[y][x+1].alive)    counter++;
+    if (world->cells[y][x-1].alive)    counter++;
+    if (world->cells[y+1][x].alive)    counter++;
+    if (world->cells[y+1][x+1].alive)  counter++;
+    if (world->cells[y+1][x-1].alive)  counter++;
 
     return counter;
   }
 
   // Rand unten
-  if(x>=1 && x<(width-1) && y<1) {
-    if (world->cells[x][y+1].alive)    counter++;
-    if (world->cells[x+1][y+1].alive)  counter++;
-    if (world->cells[x+1][y].alive)    counter++;
+  // FIXME
+  if(y>=1 && y<(height-1) && x<1) {
+    if (world->cells[y][x+1].alive)    counter++;
+    if (world->cells[y+1][x+1].alive)  counter++;
+    if (world->cells[y+1][x].alive)    counter++;
 
     return counter;
   }
 
   // Rand oben
-  if(x == width && y < height) {
-    if (world->cells[x][y-1].alive)    counter++;
-    if (world->cells[x][y+1].alive)    counter++;
-    if (world->cells[x-1][y].alive)    counter++;
-    if (world->cells[x-1][y+1].alive)  counter++;
-    if (world->cells[x-1][y-1].alive)  counter++;
+  if(y == height && x < width) {
+    if (world->cells[y][x-1].alive)    counter++;
+    if (world->cells[y][x+1].alive)    counter++;
+    if (world->cells[y-1][x].alive)    counter++;
+    if (world->cells[y-1][x+1].alive)  counter++;
+    if (world->cells[y-1][x-1].alive)  counter++;
 
     return counter;
   }
 
   // Rand oben rechts
   if(x == width && y == height) {
-    if (world->cells[x-1][y].alive)    counter++;
-    if (world->cells[x-1][y-1].alive)  counter++;
-    if (world->cells[x][y-1].alive)    counter++;
+    if (world->cells[y-1][x].alive)    counter++;
+    if (world->cells[y-1][x-1].alive)  counter++;
+    if (world->cells[y][x-1].alive)    counter++;
 
     return counter;
   }
 
   // Untere Zeile
-  if(x>0 && x<(width-1) && y>0 && y<(height-1)) {
-    if (world->cells[x-1][y-1].alive)  counter++;
-    if (world->cells[x][y-1].alive)    counter++;
-    if (world->cells[x+1][y-1].alive)  counter++;
+  // FIXME
+  if(y>0 && y<(height-1) && x>0 && x<(width-1)) {
+    if (world->cells[y-1][x-1].alive)  counter++;
+    if (world->cells[y][x-1].alive)    counter++;
+    if (world->cells[y+1][x-1].alive)  counter++;
 
     // Mittlere Zeile
-    if (world->cells[x-1][y].alive)    counter++;
-    if (world->cells[x+1][y].alive)    counter++;
+    if (world->cells[y-1][x].alive)    counter++;
+    if (world->cells[y+1][x].alive)    counter++;
 
     // Obere Zeile
-    if (world->cells[x-1][y+1].alive)  counter++;
-    if (world->cells[x][y+1].alive)    counter++;
-    if (world->cells[x+1][y+1].alive)  counter++;
+    if (world->cells[y-1][x+1].alive)  counter++;
+    if (world->cells[y][x+1].alive)    counter++;
+    if (world->cells[y+1][x+1].alive)  counter++;
 
     return counter;
   }
@@ -184,6 +189,6 @@ int countNeighbours(int x, int y, world_t *world) {
 
 void bwait() {
   fflush(stdin);
-  printf("\nPress Enter to continue...\n");
+  printf("Press Enter to continue...\n");
   getchar();
 }
