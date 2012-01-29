@@ -55,11 +55,12 @@ int main(int argc, char *argv[]) {
   /*
    * Welt ausgeben
    */
-
   printWorld(&world);
 
   /*
    * Nächster Schritt ausführen
+   * TODO: Auto Mode
+   * TODO: Beenden der Schleife wenn sich nichts mehr ändert
    */
   while(true) {
     bwait();
