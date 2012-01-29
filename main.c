@@ -137,74 +137,47 @@ void fillWorld(world_t *world) {
 int countNeighbours(int y, int x, world_t *world) {
   int counter = 0;
 
-  // Rand unten links
-  if(x<1 && y<1) {
-    if (world->cells[y][x+1].alive)    counter++;
-    if (world->cells[y+1][x].alive)    counter++;
-    if (world->cells[y+1][x+1].alive)  counter++;
+  /*
+   -------->x
+   | a b c
+   | d   e
+   | f g h
+   y
+  */
 
-    return counter;
+  // a = [x-1][y-1]
+  if(x>=1 && y>=1) {
+    if(world->cells[x-1][y-1].alive) counter++;
   }
-
-  // Rand links
-  if(y<1 && x>=1) {
-    if (world->cells[y][x+1].alive)    counter++;
-    if (world->cells[y][x-1].alive)    counter++;
-    if (world->cells[y+1][x].alive)    counter++;
-    if (world->cells[y+1][x+1].alive)  counter++;
-    if (world->cells[y+1][x-1].alive)  counter++;
-
-    return counter;
+  // b = [x]  [y-1]
+  if(y>=1) {
+    if(world->cells[x][y-1].alive) counter++;
   }
-
-  // Rand unten
-  // FIXME
-  if(y>=1 && y<(height-1) && x<1) {
-    if (world->cells[y][x+1].alive)    counter++;
-    if (world->cells[y+1][x+1].alive)  counter++;
-    if (world->cells[y+1][x].alive)    counter++;
-
-    return counter;
+  // c = [x+1][y-1]
+  if(x<(width-1) && y>=1) {
+    if(world->cells[x+1][y-1].alive) counter++;
   }
-
-  // Rand oben
-  if(y == height && x < width) {
-    if (world->cells[y][x-1].alive)    counter++;
-    if (world->cells[y][x+1].alive)    counter++;
-    if (world->cells[y-1][x].alive)    counter++;
-    if (world->cells[y-1][x+1].alive)  counter++;
-    if (world->cells[y-1][x-1].alive)  counter++;
-
-    return counter;
+  // d = [x-1][y]
+  if (x>=1) {
+    if(world->cells[x-1][y].alive) counter++;
   }
-
-  // Rand oben rechts
-  if(x == width && y == height) {
-    if (world->cells[y-1][x].alive)    counter++;
-    if (world->cells[y-1][x-1].alive)  counter++;
-    if (world->cells[y][x-1].alive)    counter++;
-
-    return counter;
+  // e = [x+1][y|
+  if (x<(width-1)) {
+    if(world->cells[x+1][y].alive) counter++;
   }
-
-  // Untere Zeile
-  // FIXME
-  if(y>0 && y<(height-1) && x>0 && x<(width-1)) {
-    if (world->cells[y-1][x-1].alive)  counter++;
-    if (world->cells[y][x-1].alive)    counter++;
-    if (world->cells[y+1][x-1].alive)  counter++;
-
-    // Mittlere Zeile
-    if (world->cells[y-1][x].alive)    counter++;
-    if (world->cells[y+1][x].alive)    counter++;
-
-    // Obere Zeile
-    if (world->cells[y-1][x+1].alive)  counter++;
-    if (world->cells[y][x+1].alive)    counter++;
-    if (world->cells[y+1][x+1].alive)  counter++;
-
-    return counter;
+  // f = [x-1][y+1]
+  if(x>=1 && y<(height-1)) {
+    if(world->cells[x-1][y+1].alive) counter ++;
   }
+  // g = [x]  [y+1]
+  if(y<(height-1)) {
+    if(world->cells[x][y+1].alive) counter ++;
+  }
+  // h = [x+1][y+1]
+  if(x<(width-1) && y<(height-1)) {
+    if(world->cells[x+1][y+1].alive) counter++;
+  }
+  return counter;
 }
 
 void bwait() {
