@@ -3,9 +3,15 @@
 
 #include "optparse.h"
 
+/*
+ * Global Vars
+ */
 int height, width = 0;
 char *path        = NULL;
 
+/*
+ * My Structs
+ */
 typedef struct {
   _Bool alive;
   _Bool alive_next_round;
@@ -15,34 +21,35 @@ typedef struct {
   cell_t **cells;
 } world_t;
 
+/*
+ * Functions
+ */
+void allocateMemory(world_t *world);
 int countNeighbours(int y, int x, world_t *world);
 void fillWorld(world_t *world);
 void printWorld(world_t *world);
 void nextStep(world_t *world);
 void bwait();
 
+/*
+ * Main
+ */
 int main(int argc, char *argv[]) {
+  // Parse command line
   if(!optparse(argc, argv))
     abort();
 
   // Initialisieren der Welt und den Zellen
   world_t world;
 
-  // Es wird eine Spalte Memory alloziert
-  // Eigentlich müsste der Zugriff über world->cells erfolgen, da cells ein
-  // Pointer ist, interessanterweise funktioniert das aber nicht im main?!
-  world.cells = (cell_t**)malloc(height * sizeof(cell_t*));
-
-  // Und jetzt das ganze für jede Zeile
-  int i;
-  for(i=0;i<height;i++) {
-    world.cells[i] = (cell_t*)malloc(width * sizeof(cell_t*));
-  }
+  /*
+   * Allocate Memory
+   */
+  allocateMemory(&world);
 
   /*
    * Welt befüllen
    */
-
   fillWorld(&world);
 
   /*
@@ -63,17 +70,27 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
+void allocateMemory(world_t *world) {
+  // Es wird eine Spalte Memory alloziert
+  world->cells = (cell_t**)malloc(height * sizeof(cell_t*));
+
+  // Und jetzt das ganze für jede Zeile
+  int i;
+  for(i=0;i<height;i++) {
+    world->cells[i] = (cell_t*)malloc(width * sizeof(cell_t*));
+  }
+}
+
 void nextStep(world_t *world) {
   int neighbours=0;
   int i,j;
   for (i=0; i < height; i++) {
     for (j=0; j<width; j++) {
       neighbours = countNeighbours(i,j,world);
-      // Regel 2-4
+      // Regeln
       if(neighbours < 2) world->cells[i][j].alive_next_round = false;
       if(neighbours > 3) world->cells[i][j].alive_next_round = false;
       if(neighbours == 3) world->cells[i][j].alive_next_round = true;
-      // Regel 1
       if(world->cells[i][j].alive && neighbours == 2) world->cells[i][j].alive = true;
     }
   }
@@ -90,10 +107,12 @@ void printWorld(world_t *world) {
   for (i=0; i < height; i++) {
     for (j=0; j<width; j++) {
       if(world->cells[i][j].alive) {
-        //printf("●");
+        printf("●");
         //printf("█");
         //printf("▆");
-        printf("◈");
+        //printf("◈");
+        //printf("○");
+        //printf("x");
       } else {
         printf(" ");
       }
