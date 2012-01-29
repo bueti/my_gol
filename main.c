@@ -25,7 +25,7 @@ typedef struct {
  * Functions
  */
 void allocateMemory(world_t *world);
-int countNeighbours(int y, int x, world_t *world);
+int countNeighbours(int x, int y, world_t *world);
 void fillWorld(world_t *world);
 void printWorld(world_t *world);
 void nextStep(world_t *world);
@@ -134,7 +134,7 @@ void fillWorld(world_t *world) {
   }
 }
 
-int countNeighbours(int y, int x, world_t *world) {
+int countNeighbours(int x, int y, world_t *world) {
   int counter = 0;
 
   /*
@@ -154,7 +154,7 @@ int countNeighbours(int y, int x, world_t *world) {
     if(world->cells[x][y-1].alive) counter++;
   }
   // c = [x+1][y-1]
-  if(x<(width-1) && y>=1) {
+  if(x<(height-1) && y>=1) {
     if(world->cells[x+1][y-1].alive) counter++;
   }
   // d = [x-1][y]
@@ -162,19 +162,19 @@ int countNeighbours(int y, int x, world_t *world) {
     if(world->cells[x-1][y].alive) counter++;
   }
   // e = [x+1][y|
-  if (x<(width-1)) {
+  if (x<(height-1)) {
     if(world->cells[x+1][y].alive) counter++;
   }
   // f = [x-1][y+1]
-  if(x>=1 && y<(height-1)) {
+  if(x>=1 && y<(width-1)) {
     if(world->cells[x-1][y+1].alive) counter ++;
   }
   // g = [x]  [y+1]
-  if(y<(height-1)) {
+  if(y<(width-1)) {
     if(world->cells[x][y+1].alive) counter ++;
   }
   // h = [x+1][y+1]
-  if(x<(width-1) && y<(height-1)) {
+  if(x<(height-1) && y<(width-1)) {
     if(world->cells[x+1][y+1].alive) counter++;
   }
   return counter;
