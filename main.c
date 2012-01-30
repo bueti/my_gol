@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <time.h>
 
 #include "optparse.h"
 
@@ -8,7 +9,7 @@
  */
 int height, width = 0;
 char *path        = NULL;
-
+_Bool automode    = false;
 /*
  * My Structs
  */
@@ -39,35 +40,33 @@ int main(int argc, char *argv[]) {
   if(!optparse(argc, argv))
     abort();
 
+  /* Nanosleep Setup */
+  int milisec = 100; // length of time to sleep, in miliseconds
+  struct timespec req = {0};
+  req.tv_sec = 0;
+  req.tv_nsec = milisec * 1000000L;
+
   // Initialisieren der Welt und den Zellen
   world_t world;
 
-  /*
-   * Allocate Memory
-   */
+  /* Allocate Memory */
   allocateMemory(&world);
 
-  /*
-   * Welt befüllen
-   */
+  /* Welt befüllen */
   fillWorld(&world);
 
-  /*
-   * Welt ausgeben
-   */
+  /* Welt ausgeben */
   printWorld(&world);
 
   /*
    * Nächster Schritt ausführen
-   * TODO: Auto Mode
    * TODO: Beenden der Schleife wenn sich nichts mehr ändert
    */
-  while(true) {
-    bwait();
+  while (true) {
+    (automode) ? nanosleep(&req, (struct timespec *)NULL) : bwait();
     nextStep(&world);
     printWorld(&world);
   }
-
   return 0;
 }
 
@@ -108,12 +107,10 @@ void printWorld(world_t *world) {
   for (i=0; i < height; i++) {
     for (j=0; j<width; j++) {
       if(world->cells[i][j].alive) {
-        printf("●");
-        //printf("█");
-        //printf("▆");
-        //printf("◈");
+        //printf("●");
         //printf("○");
-        //printf("x");
+        //printf("◆");
+        printf("☀");
       } else {
         printf(" ");
       }
@@ -138,12 +135,12 @@ int countNeighbours(int x, int y, world_t *world) {
   int counter = 0;
 
   /*
-   -------->x
-   | a b c
-   | d   e
-   | f g h
-   y
-  */
+     -------->x
+     | a b c
+     | d ● e
+     | f g h
+     y
+     */
 
   // a = [x-1][y-1]
   if(x>=1 && y>=1) {

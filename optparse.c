@@ -6,7 +6,7 @@
 #include "optparse.h"
 
 void usage() {
-  printf("valid arguments: -w (width) -h (height) -f (filename)\n");
+  printf("valid arguments: -w (width) -h (height) -f (filename) -a\n");
 }
 
 /* Retrieves height, width and pathname
@@ -22,9 +22,12 @@ _Bool optparse(int argc, char *argv[]) {
     return false;
   }
 
-  while ((c = getopt (argc, argv, "h:w:f:")) != -1)
+  while ((c = getopt (argc, argv, "h:w:f:a")) != -1)
     switch (c)
     {
+      case 'a':
+        automode = true;
+        break;
       case 'h':
         height = atoi(optarg);
         break;
