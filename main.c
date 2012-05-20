@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
     abort();
 
   /* Nanosleep Setup */
-  int milisec = 100; // length of time to sleep, in miliseconds
+  int milisec = 250; // length of time to sleep, in miliseconds
   struct timespec req = {0};
   req.tv_sec = 0;
   req.tv_nsec = milisec * 1000000L;
@@ -53,7 +53,12 @@ int main(int argc, char *argv[]) {
   allocateMemory(&world);
 
   /* Welt befüllen */
-  fillWorld(&world);
+  if(path == NULL) {
+    fillWorld(&world);
+  } else {
+    printf("-f not implemented yet!\n");
+    exit(1);
+  }
 
   /* Welt ausgeben */
   printWorld(&world);
@@ -88,14 +93,13 @@ void nextStep(world_t *world) {
     for (j=0; j<width; j++) {
       neighbours = countNeighbours(i,j,world);
       // Regeln
-      if(neighbours < 2) world->cells[i][j].alive_next_round = false;
-      if(neighbours > 3) world->cells[i][j].alive_next_round = false;
-      if(neighbours == 3) world->cells[i][j].alive_next_round = true;
+      if(neighbours < 2 || neighbours > 3) world->cells[i][j].alive_next_round = false;
       if(world->cells[i][j].alive && neighbours == 2) world->cells[i][j].alive = true;
+      if(neighbours == 3) world->cells[i][j].alive_next_round = true;
     }
   }
 
-  for(i=0; i< height; i++) {
+  for(i=0; i<height; i++) {
     for (j=0; j<width; j++) {
       world->cells[i][j].alive = (world->cells[i][j].alive_next_round) ? true : false;
     }
@@ -140,7 +144,7 @@ int countNeighbours(int x, int y, world_t *world) {
      | d ● e
      | f g h
      y
-     */
+  */
 
   // a = [x-1][y-1]
   if(x>=1 && y>=1) {
@@ -158,7 +162,7 @@ int countNeighbours(int x, int y, world_t *world) {
   if (x>=1) {
     if(world->cells[x-1][y].alive) counter++;
   }
-  // e = [x+1][y|
+  // e = [x+1][y]
   if (x<(height-1)) {
     if(world->cells[x+1][y].alive) counter++;
   }
@@ -178,7 +182,6 @@ int countNeighbours(int x, int y, world_t *world) {
 }
 
 void bwait() {
-  fflush(stdin);
   printf("Press Enter to continue...\n");
   getchar();
 }
