@@ -27,6 +27,7 @@ typedef struct {
  */
 void allocateMemory(world_t *world);
 int countNeighbours(int x, int y, world_t *world);
+int neighbours(world_t * world, int x, int y);
 _Bool fillWorld(world_t *world);
 _Bool create_world(world_t *world);
 void printWorld(world_t *world);
@@ -92,14 +93,33 @@ void allocateMemory(world_t *world) {
 
 void nextStep(world_t *world) {
   int neighbours=0;
-  int i,j;
-  for (i=0; i < height; i++) {
-    for (j=0; j<width; j++) {
-      neighbours = countNeighbours(i,j,world);
-      // Regeln
-      if(neighbours < 2 || neighbours > 3) world->cells[i][j].alive_next_round = false;
-      if(world->cells[i][j].alive && neighbours == 2) world->cells[i][j].alive = true;
-      if(neighbours == 3) world->cells[i][j].alive_next_round = true;
+  int i, j, tmp;
+
+  for(i = 0; i<height; i++) {
+    for(j = 0; j<width; j++) {
+      world->cells[i][j].alive_next_round = world->cells[i][j].alive;
+    }
+  }
+
+  for(i = 0; i<height; i++) {
+    for(j = 0; j<width; j++) {
+      // rule #1
+      if(countNeighbours(i, j, world) < 2)
+        world->cells[i][j].alive_next_round = false;
+      // rule #2
+      if((tmp == 2) || (tmp == 3)) {
+        if(world->cells[i][j].alive)
+          world->cells[i][j].alive_next_round = true;
+      };
+      // rule #3
+      if(countNeighbours(i, j, world) > 3) {
+        world->cells[i][j].alive_next_round = false;
+      };
+      // rule #4
+      if(countNeighbours(i, j, world) == 3) {
+        if(!world->cells[i][j].alive)
+          world->cells[i][j].alive_next_round = true;
+      }
     }
   }
 
