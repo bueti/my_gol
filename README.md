@@ -6,12 +6,17 @@ and AIX.
 
 Running the Game
 ----------------
-Specify the size of the World:
+* Specify the size of the World:
+
   -h: height 
+
   -w: width 
 
-Other options:
+* Other options:
+
   -a: Automatic mode
-  -f: Specify a file with a starting configuration
+
+  -f: Specify a file with a starting configuration (there are some in the
+  folder seed)
 
 

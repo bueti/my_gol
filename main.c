@@ -27,10 +27,12 @@ typedef struct {
  */
 void allocateMemory(world_t *world);
 int countNeighbours(int x, int y, world_t *world);
-void fillWorld(world_t *world);
+_Bool fillWorld(world_t *world);
+_Bool create_world(world_t *world);
 void printWorld(world_t *world);
 void nextStep(world_t *world);
 void bwait();
+_Bool read_world(world_t *world, char *path);
 
 /*
  * Main
@@ -53,11 +55,13 @@ int main(int argc, char *argv[]) {
   allocateMemory(&world);
 
   /* Welt befüllen */
-  if(path == NULL) {
-    fillWorld(&world);
+  if(path) {
+    read_world(&world, path);
+  } else if (!create_world(&world)) {
+      printf("error creating world\n");
+      exit(-2);
   } else {
-    printf("-f not implemented yet!\n");
-    exit(1);
+    fillWorld(&world);
   }
 
   /* Welt ausgeben */
@@ -123,7 +127,7 @@ void printWorld(world_t *world) {
   }
 }
 
-void fillWorld(world_t *world) {
+_Bool fillWorld(world_t *world) {
   int i,j;
   // Random seed generieren
   srand(time(NULL));
@@ -134,6 +138,22 @@ void fillWorld(world_t *world) {
     }
   }
 }
+
+_Bool create_world(world_t *world) {
+  int i;
+
+  // allocate memory to hold all lines in the world
+  world->cells = (cell_t **) malloc(sizeof (cell_t *) * height);
+
+  // for each line in the world, assign memory to it
+  for(i = 0; i<=height; i++) {
+    if(!(world->cells[i] = (cell_t *) malloc(sizeof(cell_t *) * width)))
+      return false;
+  }
+
+  return true;
+}
+
 
 int countNeighbours(int x, int y, world_t *world) {
   int counter = 0;
@@ -185,3 +205,39 @@ void bwait() {
   printf("Press Enter to continue...\n");
   getchar();
 }
+
+_Bool read_world(world_t *world, char *path) {
+  long file_size = 0;
+  FILE *fp;
+  char *input = NULL;
+
+  fp = fopen(path, "r");
+
+  // get filesize
+  fseek(fp, 0L, SEEK_END);
+  file_size = ftell(fp);
+  fseek(fp, 0L, SEEK_SET);
+
+  // read file
+  input = (char *)malloc(sizeof(char) * file_size);
+  fread(input, file_size, sizeof(char), fp);
+
+  // note: there is no syntax checking
+  width = strstr(input, "\n") - input;
+  // account newlines (+1)
+  height = (file_size) / (width + 1);
+
+  create_world(world);
+
+  int i, j, tmp = 0;
+  for(i = 0; i<height; i++) {
+    for(j = 0; j<width; j++) {
+      world->cells[i][j].alive = (input[tmp] == '*') ? true : false;
+      tmp += 1;
+    }
+    tmp += 1;
+  }
+
+  return true;
+}
+
